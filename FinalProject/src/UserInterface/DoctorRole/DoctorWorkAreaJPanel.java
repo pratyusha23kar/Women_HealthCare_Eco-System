@@ -1,0 +1,449 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package UserInterface.DoctorRole;
+
+import Business.EcoSystem;
+import Business.Enterprise.Enterprise;
+import Business.Network.Network;
+import Business.Organization.DoctorOrganization;
+import Business.Organization.LabOrganization;
+import Business.Organization.Organization;
+import Business.Organization.PharmacyOrganization;
+import Business.Organization.ReceptionistOrganization;
+import Business.Organization.WomanOrganization;
+import Business.UserAccount.UserAccount;
+import Business.WorkQueue.LabTestWorkRequest;
+import Business.WorkQueue.PatientAppointmentRequest;
+import Business.WorkQueue.PharmacyMedicineDoctorWorkRequest;
+import Business.WorkQueue.WorkRequest;
+import UserInterface.LabAssistantRole.LabAssistantWorkAreaJPanel;
+import java.awt.CardLayout;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
+
+
+
+/**
+ *
+ * @author prima
+ */
+public class DoctorWorkAreaJPanel extends javax.swing.JPanel {
+    private JPanel userProcessContainer;
+    private DoctorOrganization organization;
+    private Enterprise enterprise;
+    private UserAccount userAccount;
+    
+    private Network network;
+    private EcoSystem business;
+
+    /**
+     * Creates new form DoctorWorkAreaJPanel
+     */
+    public DoctorWorkAreaJPanel(JPanel userProcessContainer, UserAccount account, Organization organization, Enterprise enterprise, Network network) {
+        initComponents();
+        
+        this.userProcessContainer = userProcessContainer;
+        this.organization = (DoctorOrganization)organization;
+    //    this.enterprise = enterprise;
+        this.userAccount = account;
+      this.network= network;
+        this.enterprise = enterprise;
+        //valueLabel.setText(enterprise.getName());
+      populateRequestTable();
+     populateRequestTable2();
+     populateTable3();
+    }
+       public void populateRequestTable(){
+        DefaultTableModel model = (DefaultTableModel) labWorkRequestJTable.getModel();
+        
+        model.setRowCount(0);      
+                Organization org = null;
+
+        for (Organization organization1 : enterprise.getOrganizationDirectory().getOrganizationList())
+            {
+                  if (organization1 instanceof LabOrganization){
+                org = organization1;
+                break;
+            }
+            }
+        for (WorkRequest request : org.getWorkQueue().getWorkRequestList()){
+           
+            Object[] row = new Object[4];
+            row[0] = request.getMessage();
+            row[1] = request.getReceiver();
+            row[2] = request.getStatus();
+            String result = ((LabTestWorkRequest) request).getTestResult();
+            row[3] = result == null ? "Waiting" : result;
+            
+            model.addRow(row);
+        }
+    }
+       
+        
+
+         public void populateRequestTable2(){
+          DefaultTableModel model = (DefaultTableModel) medRequestJTable.getModel();
+        
+        model.setRowCount(0);      
+        Organization org = null;
+
+        for(Enterprise enterprise: network.getEnterpriseDirectory().getEnterpriseList())
+        {
+        for (Organization organization1 : enterprise.getOrganizationDirectory().getOrganizationList())
+        {
+                if (organization1 instanceof PharmacyOrganization){                    
+                    org = organization1;     
+                   break;
+            }
+        }
+        }
+        
+      for (WorkRequest request : org.getWorkQueue().getWorkRequestList()){
+            if (request instanceof PharmacyMedicineDoctorWorkRequest) {
+            Object[] row = new Object[4];
+            row[0] = request.getMessage();
+            row[1] = request.getReceiver();
+            row[2] = request.getStatus();
+            String result1 = ((PharmacyMedicineDoctorWorkRequest) request).getMedicineRequest();
+            row[3] = result1 == null ? "Waiting" : result1;
+            
+            model.addRow(row);
+      }
+      }
+    }
+         
+         public void populateTable3(){
+        DefaultTableModel model = (DefaultTableModel)apptRequestJTable.getModel();
+        
+        model.setRowCount(0);
+        
+        for(WorkRequest request : organization.getWorkQueue().getWorkRequestList()){
+            Object[] row = new Object[4];
+            row[0] = request;
+            row[1] = request.getSender().getEmployee().getName();
+            row[2] = request.getReceiver() == null ? null : request.getReceiver().getEmployee().getName();            
+            model.addRow(row);
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        btnRefresh3 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        medRequestJTable = new javax.swing.JTable();
+        btnRequestTest = new javax.swing.JButton();
+        panel1 = new java.awt.Panel();
+        jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        labWorkRequestJTable = new javax.swing.JTable();
+        btnRefresh2 = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        apptRequestJTable = new javax.swing.JTable();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+
+        btnRefresh3.setText("Refresh Table");
+        btnRefresh3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefresh3ActionPerformed(evt);
+            }
+        });
+
+        setBackground(new java.awt.Color(255, 255, 255));
+
+        medRequestJTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Medicine Required", "Receiver", "Status", "Prescription Status"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        medRequestJTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                medRequestJTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(medRequestJTable);
+
+        btnRequestTest.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Business/Images/Save-as-icon.png"))); // NOI18N
+        btnRequestTest.setText("Request Lab Test");
+        btnRequestTest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRequestTestActionPerformed(evt);
+            }
+        });
+
+        panel1.setBackground(new java.awt.Color(0, 153, 153));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Doctor Dashboard");
+
+        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
+        panel1.setLayout(panel1Layout);
+        panel1Layout.setHorizontalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panel1Layout.setVerticalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                .addContainerGap(31, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(28, 28, 28))
+        );
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Business/Images/Save-as-icon.png"))); // NOI18N
+        jButton1.setText("Write A Prescription");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(0, 153, 153));
+        jLabel11.setText("Prescriptions for Patients");
+
+        labWorkRequestJTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Test Required", "Receiver", "Status", "Test Result"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        labWorkRequestJTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                labWorkRequestJTableMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(labWorkRequestJTable);
+
+        btnRefresh2.setText("Refresh Tables");
+        btnRefresh2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefresh2ActionPerformed(evt);
+            }
+        });
+
+        apptRequestJTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Reason for Appointment", "Sender", "Receiver"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        apptRequestJTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                apptRequestJTableMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(apptRequestJTable);
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(0, 153, 153));
+        jLabel12.setText("Lab Tests");
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(0, 153, 153));
+        jLabel13.setText("Patient Appointments");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3)
+                    .addComponent(jScrollPane2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel11)
+                                .addGap(0, 605, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addGap(0, 756, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnRefresh2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnRequestTest, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnRefresh2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel13)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 23, Short.MAX_VALUE)
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addComponent(btnRequestTest, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(152, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRequestTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRequestTestActionPerformed
+        // TODO add your handling code here:
+        
+         int selectedRow = labWorkRequestJTable.getSelectedRow();
+        
+        
+        
+        
+        
+        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+        userProcessContainer.add("RequestLabJPanel", new DoctorRequestLabTestJPanel(userProcessContainer, userAccount, enterprise, organization));
+        layout.next(userProcessContainer);
+    }//GEN-LAST:event_btnRequestTestActionPerformed
+
+    private void medRequestJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_medRequestJTableMouseClicked
+        // TODO add your handling code here:
+  
+    }//GEN-LAST:event_medRequestJTableMouseClicked
+
+    private void labWorkRequestJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_labWorkRequestJTableMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_labWorkRequestJTableMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        int selectedRow = medRequestJTable.getSelectedRow();
+        
+        
+        
+      
+        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+        userProcessContainer.add("MedicineRequestJPanel", new DoctorRequestPharmacyMedicine(userProcessContainer, userAccount, enterprise, organization, network));
+        layout.next(userProcessContainer);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnRefresh2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefresh2ActionPerformed
+     populateRequestTable();
+     populateRequestTable2();
+     populateTable3();    }//GEN-LAST:event_btnRefresh2ActionPerformed
+
+    private void apptRequestJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_apptRequestJTableMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_apptRequestJTableMouseClicked
+
+    private void btnRefresh3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefresh3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRefresh3ActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable apptRequestJTable;
+    private javax.swing.JButton btnRefresh2;
+    private javax.swing.JButton btnRefresh3;
+    private javax.swing.JButton btnRequestTest;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable labWorkRequestJTable;
+    private javax.swing.JTable medRequestJTable;
+    private java.awt.Panel panel1;
+    // End of variables declaration//GEN-END:variables
+}
